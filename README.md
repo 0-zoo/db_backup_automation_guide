@@ -162,22 +162,24 @@ chmod +x /root/db_backup/backup.sh
 - 파일명 형식: `db_<DBNAME>_YYYYMMDD_HHMMSS.tar.gz`
 - 보관 정책:
     - 최근 7일치 일 단위 보관
-    - 주간 백업은 1달간 보관
-    - 월간 백업은 1년간 보관
+    
 
 ---
 
 ## 6. 벤더사별 DB 백업 기술 조사
 
-| DB 벤더 | 주요 백업 도구 | 특징 | 권장 백업 주기 | 권장 파일명 형식 | 공식 문서 |
-| --- | --- | --- | --- | --- | --- |
-| **MySQL / MariaDB** | `mysqldump`, `mysqlpump`, Percona XtraBackup | - `mysqldump`: 논리적, 이식성 높음- `mysqlpump`: 병렬 지원, 더 빠름- `XtraBackup`: 대규모 운영에 적합, 서비스 중단 없음 | - Full dump: 하루 1회 (새벽)- Binary Log 기반 증분: 5~15분 단위- 소규모/실습: 하루 1회 full dump만 해도 충분 | `mysql_<DBNAME>_YYYYMMDD_HHMMSS.sql` | [MySQL Backup Docs](https://dev.mysql.com/doc/refman/8.0/en/backup-methods.html) |
-| **PostgreSQL** | `pg_dump`, `pg_dumpall`, PITR (Point-in-Time Recovery) | - `pg_dump`: DB 단위- `pg_dumpall`: 클러스터 단위- WAL 로그 아카이빙 → 특정 시점 복구 가능 | - Full dump: 하루 1회- WAL 로그 아카이빙: 5~10분 단위- 학습 환경: 하루 1회 full dump | `pg_<DBNAME>_YYYYMMDD_HHMMSS.sql` | [PostgreSQL Backup Docs](https://www.postgresql.org/docs/current/backup.html) |
-| **Oracle** | RMAN, Data Pump (`expdp`/`impdp`) | - RMAN: 블록 단위 물리적 백업, 증분/병렬 지원- Data Pump: 테이블/스키마 단위 논리적 백업 | - Full backup (RMAN): 주 1회- Incremental backup: 매일 또는 6~12시간 단위- Archive log: 실시간 아카이빙 | `oracle_rman_FULL_YYYYMMDD.bakoracle_dp_<SCHEMA>_YYYYMMDD.dmp` | [Oracle RMAN Docs](https://docs.oracle.com/en/database/oracle/oracle-database/) |
-| **MS SQL Server** | SSMS, `BACKUP DATABASE` | - Full, Differential, Transaction Log 조합- GUI/스크립트 모두 지원 | - Full backup: 주 1회- Differential backup: 매일 1회- Transaction Log backup: 15~30분 단위 | `mssql_<DBNAME>_FULL_YYYYMMDD.bakmssql_<DBNAME>_LOG_YYYYMMDD.trn` | [MS SQL Backup Docs](https://learn.microsoft.com/en-us/sql/relational-databases/backup-restore/) |
-| **MongoDB (NoSQL)** | `mongodump`, `mongorestore`, Oplog 기반 증분 | - `mongodump`: BSON 기반, 개발환경 적합- Oplog Tail: 증분 백업- Atlas(클라우드): 자동 스냅샷 | - Full dump: 하루 1회- Oplog 기반 증분: 수 분~1시간 단위- 소규모 테스트: 하루 1회 | `mongo_<DBNAME>_YYYYMMDD.archive` | [MongoDB Backup Docs](https://www.mongodb.com/docs/manual/core/backups/) |
 
----
+
+| DB 벤더              | 주요 백업 도구                             | 특징                                                                 | 권장 백업 주기                                        | 권장 파일명 형식                          | 공식 문서                                                                 |
+|-----------------------|--------------------------------------------|----------------------------------------------------------------------|-------------------------------------------------------|-------------------------------------------|--------------------------------------------------------------------------|
+| **MySQL / MariaDB**  | `mysqldump`, `mysqlpump`, Percona XtraBackup | - `mysqldump`: 논리적, 이식성 높음<br>- `mysqlpump`: 병렬 지원<br>- `XtraBackup`: 대규모 운영 적합, 무중단 | - Full dump: 하루 1회 (새벽)<br>- Binary Log: 5~15분 단위<br>- 소규모: 하루 1회 Full | `mysql_<DBNAME>_YYYYMMDD_HHMMSS.sql` | [MySQL Backup Docs](https://dev.mysql.com/doc/refman/8.0/en/backup-methods.html) |
+| **PostgreSQL**       | `pg_dump`, `pg_dumpall`, PITR               | - `pg_dump`: DB 단위<br>- `pg_dumpall`: 클러스터 단위<br>- WAL 로그 아카이빙 → 시점 복구 | - Full dump: 하루 1회<br>- WAL 로그: 5~10분 단위<br>- 학습: 하루 1회 Full | `pg_<DBNAME>_YYYYMMDD_HHMMSS.sql`    | [PostgreSQL Backup Docs](https://www.postgresql.org/docs/current/backup.html) |
+| **Oracle**           | RMAN, Data Pump (`expdp`/`impdp`)           | - RMAN: 물리적 백업, 증분/병렬 지원<br>- Data Pump: 테이블/스키마 단위 논리적 백업 | - Full (RMAN): 주 1회<br>- Incremental: 매일 또는 6~12시간<br>- Archive log: 실시간 | `oracle_rman_FULL_YYYYMMDD.bak`<br>`oracle_dp_<SCHEMA>_YYYYMMDD.dmp` | [Oracle RMAN Docs](https://docs.oracle.com/en/database/oracle/oracle-database/) |
+| **MS SQL Server**    | SSMS, `BACKUP DATABASE`                     | - Full, Differential, Transaction Log 조합<br>- GUI/스크립트 모두 지원 | - Full: 주 1회<br>- Differential: 매일 1회<br>- Log: 15~30분 단위 | `mssql_<DBNAME>_FULL_YYYYMMDD.bak`<br>`mssql_<DBNAME>_LOG_YYYYMMDD.trn` | [MS SQL Backup Docs](https://learn.microsoft.com/en-us/sql/relational-databases/backup-restore/) |
+| **MongoDB (NoSQL)**  | `mongodump`, `mongorestore`, Oplog 기반 증분 | - `mongodump`: BSON 기반, 개발환경 적합<br>- Oplog Tail: 증분 백업<br>- Atlas: 자동 스냅샷 | - Full dump: 하루 1회<br>- Oplog: 수 분~1시간 단위<br>- 소규모: 하루 1회 | `mongo_<DBNAME>_YYYYMMDD.archive`   | [MongoDB Backup Docs](https://www.mongodb.com/docs/manual/core/backups/) |
+
+
+
 
 ## 7. 백업 주기 전략
 
@@ -255,7 +257,7 @@ chmod +x /root/db_backup/backup.sh
 
 본 프로젝트를 통해 데이터베이스 설치 및 단순 백업 실습을 넘어, **운영 자동화와 DevOps 원칙**에 대해 고찰해볼 수 있었다**.** DevOps는 개발(Development)과 운영(Operations)의 경계를 허물고, **자동화·표준화·지속 가능성**을 핵심 가치로 삼는다. DevOps 관점에서 본 프로젝트의 의의를 살펴보았다.
 
-### 1. 다수 사용자 계정 환경에서의 공통 환경 구축
+### 🔹 1. 다수 사용자 계정 환경에서의 공통 환경 구축
 
 - 서버 내에는 `ubuntu`, `user01`, `user03`, `user04` 등 다수의 사용자 계정이 존재하였다.
 - Java 및 MySQL 실행 환경을 **전역 PATH 설정**(`/etc/profile`, `/etc/environment`)을 통해 통합함으로써, 모든 사용자가 동일한 환경에서 개발 및 운영을 수행할 수 있도록 하였다.
@@ -264,7 +266,7 @@ chmod +x /root/db_backup/backup.sh
 
 ---
 
-### 2. 자동화 스크립트를 통한 반복 업무 최적화
+### 🔹 2. 자동화 스크립트를 통한 반복 업무 최적화
 
 - `mysqldump` 명령어를 단발성으로 실행하는 것에 그치지 않고, **cron + shell script**를 활용하여 정기적이고 자동화된 백업 프로세스를 구축하였다.
 - 백업 시점에 따라 SQL 덤프 파일을 생성하고, `tar` 압축을 통해 보관 및 용량 최적화를 수행하였다.
@@ -273,7 +275,7 @@ chmod +x /root/db_backup/backup.sh
 
 ---
 
-### 3. 벤더사별 DB 백업 기술 비교를 통한 표준화된 정책 수립
+### 🔹 3. 벤더사별 DB 백업 기술 비교를 통한 표준화된 정책 수립
 
 - MySQL, PostgreSQL, Oracle, MS SQL Server, MongoDB 등 다양한 DBMS의 공식 백업 방안을 조사·비교하였다.
 - 각 벤더별 도구(`mysqldump`, `pg_dump`, RMAN, T-SQL BACKUP, mongodump)의 특징과 **논리/물리 백업, 증분 백업, 시점 복구(PITR)** 지원 여부를 분석하였다.
@@ -282,7 +284,7 @@ chmod +x /root/db_backup/backup.sh
 
 ---
 
-### 4. DevOps 문화적 가치와의 연계
+### 🔹 4. DevOps 문화적 가치와의 연계
 
 - 서버 환경 설정, 데이터베이스 관리, 백업 및 복구, 문서화 과정을 직접 수행하면서 DevOps의 핵심 가치인 **자동화(Automation)**, **재현성(Reproducibility)**, **지속 가능성(Sustainability)**을 경험하였다.
 - 단순한 기술 구현을 넘어, **데이터 운영을 코드화(Infrastructure as Code, IaC)** 하고, 주기적 백업을 통해 **지속 가능한 서비스 운영 체계**를 마련하는 것이 DevOps 문화와 직결됨을 학습하였다.
