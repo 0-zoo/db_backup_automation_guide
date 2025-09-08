@@ -22,21 +22,20 @@
 
 ## 📑 목차
 
-1. [프로젝트 개요](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B0%9C%EC%9A%94)
-2. [실습 환경](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%EC%8B%A4%EC%8A%B5-%ED%99%98%EA%B2%BD)
-3. [MySQL 설치 및 서비스 등록](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#mysql-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%84%9C%EB%B9%84%EC%8A%A4-%EB%93%B1%EB%A1%9D)
-4. [샘플 스키마 (EMP & DEPT 테이블)](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%EC%83%98%ED%94%8C-%EC%8A%A4%ED%82%A4%EB%A7%88-emp--dept-%ED%85%8C%EC%9D%B4%EB%B8%94)
-5. [DB 백업 자동화](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#db-%EB%B0%B1%EC%97%85-%EC%9E%90%EB%8F%99%ED%99%94)
-    - 5.1 [mysqldump 기본 백업](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#mysqldump-%EA%B8%B0%EB%B3%B8-%EB%B0%B1%EC%97%85)
-    - 5.2 [crontab 자동화 설정](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#crontab-%EC%9E%90%EB%8F%99%ED%99%94-%EC%84%A4%EC%A0%95)
-    - 5.3 [Shell Script & Tar 압축](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#shell-script--tar-%EC%95%95%EC%B6%95)
-    - 5.4 [파일명 규칙 및 보관 정책](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%ED%8C%8C%EC%9D%BC%EB%AA%85-%EA%B7%9C%EC%B9%99-%EB%B0%8F-%EB%B3%B4%EA%B4%80-%EC%A0%95%EC%B1%85)
-6. [벤더사별 DB 백업 기술 조사](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%EB%B2%A4%EB%8D%94%EC%82%AC%EB%B3%84-db-%EB%B0%B1%EC%97%85-%EA%B8%B0%EC%88%A0-%EC%A1%B0%EC%82%AC)
-7. [백업 주기 전략](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%EB%B0%B1%EC%97%85-%EC%A3%BC%EA%B8%B0-%EC%A0%84%EB%9E%B5)
-8. [DevOps 관점에서의 의의](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#devops-%EA%B4%80%EC%A0%90%EC%97%90%EC%84%9C%EC%9D%98-%EC%9D%98%EC%9D%98)
-9. [향후 개선 방향](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%ED%96%A5%ED%9B%84-%EA%B0%9C%EC%84%A0-%EB%B0%A9%ED%96%A5)
-10. [참고 문헌 및 공식 문서](https://chatgpt.com/g/g-p-6867308ac01c819185adaf06556544bf-keulraudeuenjinieoring/c/68be3c24-9918-8325-ba04-01ae03f70a12#%EC%B0%B8%EA%B3%A0-%EB%AC%B8%ED%97%8C-%EB%B0%8F-%EA%B3%B5%EC%8B%9D-%EB%AC%B8%EC%84%9C)
-
+1. [프로젝트 개요](#프로젝트-개요)
+2. [실습 환경](#실습-환경)
+3. [MySQL 설치 및 서비스 등록](#mysql-설치-및-서비스-등록)
+4. [샘플 스키마 (EMP & DEPT 테이블)](#샘플-스키마-emp--dept-테이블)
+5. [DB 백업 자동화](#db-백업-자동화)
+   - 5.1 [mysqldump 기본 백업](#mysqldump-기본-백업)
+   - 5.2 [crontab 자동화 설정](#crontab-자동화-설정)
+   - 5.3 [Shell Script & Tar 압축](#shell-script--tar-압축)
+   - 5.4 [파일명 규칙 및 보관 정책](#파일명-규칙-및-보관-정책)
+6. [벤더사별 DB 백업 기술 조사](#벤더사별-db-백업-기술-조사)
+7. [백업 주기 전략](#백업-주기-전략)
+8. [DevOps 관점에서의 의의](#devops-관점에서의-의의)
+9. [향후 개선 방향](#향후-개선-방향)
+10. [참고 문헌 및 공식 문서](#참고-문헌-및-공식-문서)
 ---
 
 ## 1. 프로젝트 개요
