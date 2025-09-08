@@ -200,6 +200,7 @@ chmod +x /root/db_backup/backup.sh
 
 ---
 
+
 ### 🔹 Differential / Incremental Backup (차등/증분 백업)
 
 - Differential: Full Backup 이후 변경된 모든 데이터를 백업 (매일 1회)
