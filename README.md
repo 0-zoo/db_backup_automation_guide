@@ -168,34 +168,88 @@ chmod +x /root/db_backup/backup.sh
 
 ## 6. 벤더사별 DB 백업 기술 조사
 
+### 🔹 MySQL / MariaDB
+
+- **주요 백업 도구**: `mysqldump`, `mysqlpump`, Percona XtraBackup
+- **특징**
+    - `mysqldump`: 논리적 백업, 이식성 높음
+    - `mysqlpump`: 병렬 지원으로 더 빠른 속도
+    - `XtraBackup`: 대규모 운영 환경에 적합, 서비스 중단 없이 백업 가능
+- **권장 백업 주기**
+    - Full dump: 하루 1회 (새벽)
+    - Binary Log 기반 증분: 5~15분 단위
+    - 소규모/실습 환경: 하루 1회 full dump만으로 충분
+- **파일명 형식**: `mysql_<DBNAME>_YYYYMMDD_HHMMSS.sql`
+- **공식 문서**: [MySQL Backup Docs](https://dev.mysql.com/doc/refman/8.0/en/backup-methods.html)
+
+---
+
+### 🔹 PostgreSQL
+
+- **주요 백업 도구**: `pg_dump`, `pg_dumpall`, PITR (Point-in-Time Recovery)
+- **특징**
+    - `pg_dump`: 데이터베이스 단위 백업
+    - `pg_dumpall`: 클러스터 전체 백업
+    - WAL 로그 아카이빙을 통해 특정 시점으로 복구 가능
+- **권장 백업 주기**
+    - Full dump: 하루 1회
+    - WAL 로그 아카이빙: 5~10분 단위
+    - 학습/테스트 환경: 하루 1회 full dump
+- **파일명 형식**: `pg_<DBNAME>_YYYYMMDD_HHMMSS.sql`
+- **공식 문서**: [PostgreSQL Backup Docs](https://www.postgresql.org/docs/current/backup.html)
+
+---
+
+### 🔹 Oracle
+
+- **주요 백업 도구**: RMAN, Data Pump (`expdp` / `impdp`)
+- **특징**
+    - RMAN: 블록 단위 물리적 백업, 증분/병렬 지원
+    - Data Pump: 테이블/스키마 단위 논리적 백업
+- **권장 백업 주기**
+    - Full backup (RMAN): 주 1회
+    - Incremental backup: 매일 또는 6~12시간 단위
+    - Archive log: 실시간 아카이빙
+- **파일명 형식**
+    - `oracle_rman_FULL_YYYYMMDD.bak`
+    - `oracle_dp_<SCHEMA>_YYYYMMDD.dmp`
+- **공식 문서**: [Oracle RMAN Docs](https://docs.oracle.com/en/database/oracle/oracle-database/)
+
+---
+
+### 🔹 MS SQL Server
+
+- **주요 백업 도구**: SSMS, `BACKUP DATABASE`
+- **특징**
+    - Full, Differential, Transaction Log 조합 가능
+    - GUI와 스크립트 모두 지원
+- **권장 백업 주기**
+    - Full backup: 주 1회
+    - Differential backup: 매일 1회
+    - Transaction Log backup: 15~30분 단위
+- **파일명 형식**
+    - `mssql_<DBNAME>_FULL_YYYYMMDD.bak`
+    - `mssql_<DBNAME>_LOG_YYYYMMDD.trn`
+- **공식 문서**: [MS SQL Backup Docs](https://learn.microsoft.com/en-us/sql/relational-databases/backup-restore/)
+
+---
+
+### 🔹 MongoDB (NoSQL)
+
+- **주요 백업 도구**: `mongodump`, `mongorestore`, Oplog 기반 증분
+- **특징**
+    - `mongodump`: BSON 기반, 개발/테스트 환경에 적합
+    - Oplog Tail: 증분 백업 가능
+    - Atlas(클라우드): 자동 스냅샷 지원
+- **권장 백업 주기**
+    - Full dump: 하루 1회
+    - Oplog 기반 증분: 수 분 ~ 1시간 단위
+    - 소규모 테스트 환경: 하루 1회 full dump
+- **파일명 형식**: `mongo_<DBNAME>_YYYYMMDD.archive`
+- **공식 문서**: [MongoDB Backup Docs](https://www.mongodb.com/docs/manual/core/backups/)
 
 
-| DB 벤더 | 주요 백업 도구 | 특징 | 권장 백업 주기 | 권장 파일명 형식 | 공식 문서 |
-| --- | --- | --- | --- | --- | --- |
-| **MySQL / MariaDB** | `mysqldump`, `mysqlpump`, Percona XtraBackup | - `mysqldump`: 논리적, 이식성 높음
-- `mysqlpump`: 병렬 지원, 더 빠름 - `XtraBackup`: 대규모 운영에 적합, 서비스 중단 없음 | - Full dump: 하루 1회 (새벽)
-- Binary Log 기반 증분: 5~15분 단위
-- 소규모/실습: 하루 1회 full dump만 해도 충분 | `mysql_<DBNAME>_YYYYMMDD_HHMMSS.sql` | [MySQL Backup Docs](https://dev.mysql.com/doc/refman/8.0/en/backup-methods.html) |
-| **PostgreSQL** | `pg_dump`, `pg_dumpall`, PITR (Point-in-Time Recovery) | - `pg_dump`: DB 단위
-- `pg_dumpall`: 클러스터 단위- WAL 로그 아카이빙 
-→ 특정 시점 복구 가능 | - Full dump: 하루 1회
-- WAL 로그 아카이빙: 5~10분 단위
-- 학습 환경: 하루 1회 full dump | `pg_<DBNAME>_YYYYMMDD_HHMMSS.sql` | [PostgreSQL Backup Docs](https://www.postgresql.org/docs/current/backup.html) |
-| **Oracle** | RMAN, Data Pump (`expdp`/`impdp`) | - RMAN: 블록 단위 물리적 백업, 증분/병렬 지원
-- Data Pump: 테이블/스키마 단위 논리적 백업 | - Full backup (RMAN): 주 1회
-- Incremental backup: 매일 또는 6~12시간 단위
-- Archive log: 실시간 아카이빙 | `oracle_rman_FULL_YYYYMMDD.bakoracle_dp_<SCHEMA>_YYYYMMDD.dmp` | [Oracle RMAN Docs](https://docs.oracle.com/en/database/oracle/oracle-database/) |
-| **MS SQL Server** | SSMS, `BACKUP DATABASE` | - Full, Differential, Transaction Log 조합
-- GUI/스크립트 모두 지원 | - Full backup: 주 1회
-- Differential backup: 매일 1회 
-- Transaction Log backup: 15~30분 단위 | `mssql_<DBNAME>_FULL_YYYYMMDD.bakmssql_<DBNAME>_LOG_YYYYMMDD.trn` | [MS SQL Backup Docs](https://learn.microsoft.com/en-us/sql/relational-databases/backup-restore/) |
-| **MongoDB (NoSQL)** | `mongodump`, `mongorestore`, Oplog 기반 증분 | - `mongodump`: BSON 기반, 개발환경 적합
-- Oplog Tail: 증분 백업
-- Atlas(클라우드): 자동 스냅샷 | - Full dump: 하루 1회
-- Oplog 기반 증분: 수 분~1시간 단위
-- 소규모 테스트: 하루 1회 | `mongo_<DBNAME>_YYYYMMDD.archive` | [MongoDB Backup Docs](https://www.mongodb.com/docs/manual/core/backups/) |
-
-
+---
 
 ## 7. 백업 주기 전략
 
